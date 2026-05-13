@@ -3,17 +3,22 @@ import { validate } from "../utils/validate";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth } from "../services/firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../store/userSlice";
+import { AUTH_BG_IMG, USER_LOGO } from "../utils/constants";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formErrors, setFormErrors] = useState("");
+
+  const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
-  const img =
-    "https://assets.nflxext.com/ffe/siteui/vlv3/76c5a455-c62c-46d4-8653-3924728113e3/web/IN-en-20260504-TRIFECTA-perspective_596176fe-3b1e-48ec-8a00-a0acb34e68f1_large.jpg";
+  const dispatch = useDispatch();
 
   function authToggle() {
     setIsLogin(!isLogin);
@@ -35,9 +40,8 @@ const Auth = () => {
         passwordRef.current.value,
       )
         .then((userCredential) => {
-          // Signed in
           const user = userCredential.user;
-          console.log(user);
+          console.log("Login User -", user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -51,9 +55,19 @@ const Auth = () => {
         passwordRef.current.value,
       )
         .then((userCredential) => {
-          // Signed up
           const user = userCredential.user;
-          console.log(user);
+          updateProfile(user, {
+            displayName: nameRef.current.value,
+            photoURL: USER_LOGO,
+          })
+            .then(() => {
+              const { uid, displayName, email, photoURL } = user;
+              dispatch(addUser({ uid, displayName, email, photoURL }));
+            })
+            .catch((error) => {
+              setFormErrors(error.message);
+            });
+          console.log("Sign In User -", user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -65,7 +79,11 @@ const Auth = () => {
 
   return (
     <div className="relative">
-      <img className="w-full h-screen object-cover" src={img} alt="auth-bg" />
+      <img
+        className="w-full h-screen object-cover"
+        src={AUTH_BG_IMG}
+        alt="auth-bg"
+      />
 
       <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
         <form
@@ -81,6 +99,7 @@ const Auth = () => {
               className="p-3 rounded bg-gray-800 text-white w-80"
               type="text"
               placeholder="Enter Name"
+              ref={nameRef}
             />
           )}
 
