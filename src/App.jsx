@@ -1,13 +1,13 @@
 import { RouterProvider } from "react-router-dom";
-import Header from "./components/Header";
 import router from "./app/router";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 function App() {
   return (
-    <>
-      <Header />
+    <Provider store={store}>
       <RouterProvider router={router} />
-    </>
+    </Provider>
   );
 }
 
