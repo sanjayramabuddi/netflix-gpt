@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
 
-// import MainLayout from "../layouts/MainLayout";
-import Auth from "../components/Auth";
-import Browse from "../components/Browse";
-// import NotFound from "../pages/NotFound";
+import Auth from "../pages/Auth"
+import Browse from "../pages/Browse";
+import Layout from "../pages/Layout";
+import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    // element: <MainLayout />,
-    // errorElement: <NotFound />,
+    element: <Layout />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
